@@ -1,11 +1,76 @@
-<link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="/style.css">
 <header>
-  <h1 class="title">らーゆの部屋</h1>
+  <h1 class="title">らーゆの小部屋</h1>
   </div>
 </header>
 <body>
+<div id="wrapper">
+    <canvas id="particle"></canvas>
+<!--/wrapper--></div>    
+
   <h2>
-    
+    適当ななんとか。
   </h2>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="js/particleText.js"></script><!--https://github.com/55Kaerukun/particleText.jsからダウンロードして使用-->
+<script src="particle.js"></script>
 </body>
+<style>
+    header {
+        display: flex;
+        width:  100%; /* ヘッダーの幅を画面全体に */
+        height:  80px; /*  高さを一度に1回だけ設定 */
+        border-radius:  20px;
+        font-size:  2rem;
+        overflow: hidden;
+        position: sticky;
+        z-index:  1;
+        margin-top: 10px;
+        background: rgba(251,  251,  251,  0.3);
+        box-shadow:  0  8px  32px  0 rgba(31,  38,  135,  0.37);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+
+        border:  1px solid rgba(255,  255,  255,  0.18);
+        &:before {
+            background-color: rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px) saturate(100%) contrast(45%) brightness(130%);
+            -webkit-backdrop-filter: blur(10px) saturate(100%) contrast(45%) brightness(130%);
+            content: "";
+            height:  100%;
+            position: absolute;
+            width:  100%;
+        }
+        .title {
+            margin-right: auto;
+            margin-left:  20px;
+            margin-top:  15px;
+            z-index:  7;
+            font-size:  35px;
+            color: rgb(54,  54,  54);
+            padding-bottom:  20px;
+        }
+    }
+    body {
+        background-color: rgb(49,  97,  208);
+        margin-top: auto;
+    }
+
+
+    #wrapper{
+        /*描画されるテキストを中央寄せにする*/
+	    display:flex;
+	    justify-content: center;
+	    align-items: center;
+    }
+    #particle{
+        width:100%;
+	    height: 100vh;
+	    vertical-align: bottom;/*canvasタグ下に余白が生まれるのを防ぐ*/
+    }
+.h2{
+    
+}
+
 </style>
