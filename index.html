@@ -1,76 +1,573 @@
 <!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="/style.css">
-<header>
-  <h1 class="title">らーゆの小部屋</h1>
-  </div>
-</header>
-<body>
-<div id="wrapper">
-    <canvas id="particle"></canvas>
-<!--/wrapper--></div>    
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>らーゆ</title>
+    <!-- Google Fonts (Noto Sans JP) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
 
-  <h2>
-    適当ななんとか。
-  </h2>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="js/particleText.js"></script><!--https://github.com/55Kaerukun/particleText.jsからダウンロードして使用-->
-<script src="particle.js"></script>
-</body>
-<style>
-    header {
-        display: flex;
-        width:  100%; /* ヘッダーの幅を画面全体に */
-        height:  80px; /*  高さを一度に1回だけ設定 */
-        border-radius:  20px;
-        font-size:  2rem;
-        overflow: hidden;
-        position: sticky;
-        z-index:  1;
-        margin-top: 10px;
-        background: rgba(251,  251,  251,  0.3);
-        box-shadow:  0  8px  32px  0 rgba(31,  38,  135,  0.37);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
+        /* ヘッダー (アプリタイトルバー風) */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(35px);
+            text-align: center;
+            padding: 0.9em 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-        border:  1px solid rgba(255,  255,  255,  0.18);
-        &:before {
-            background-color: rgba(255,255,255,0.3);
-            backdrop-filter: blur(10px) saturate(100%) contrast(45%) brightness(130%);
-            -webkit-backdrop-filter: blur(10px) saturate(100%) contrast(45%) brightness(130%);
-            content: "";
-            height:  100%;
+        header h1 {
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        header p {
+            display: none;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            margin-top: 50px;
+            min-height: calc(100vh - 50px);
+            flex-direction: column;
+        }
+
+        /* ポートフォリオ画像セクション (超特大 single image) */
+        .portfolio-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .portfolio-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
+
+            /* 縮小アニメーション設定 */
+            transform: scale(1.15); /* 初期状態を少し拡大 */
+            animation: portfolio-scale-down 0.8s ease-out forwards; /* アニメーション適用 */
+        }
+
+        .portfolio-image:hover {
+            transform: scale(1.05);
+        }
+
+        .portfolio-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ポートフォリオアイコンアニメーション */
+        @keyframes portfolio-scale-down {
+            to {
+                transform: scale(1); /* 最終的に等倍に */
+            }
+        }
+
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            max-width: 900px;
+            width: 100%;
+            padding: 15px;
+        }
+
+        /* カード (アプリアイコン風) - アニメーションコード削除 */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 26px;
+            padding: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.04);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-content {
+            width: 100%;
+        }
+
+        .icon {
+            font-size: 2.5em;
+            margin-bottom: 6px;
+            display: block;
+            color: #fff;
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .card p {
+            margin: 0.2em 0;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .button {
+            display: none;
+        }
+
+
+        footer {
+            display: none;
+        }
+
+        /* Font Awesome Icon Fix */
+        .icon-user::before { content: "\f007"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+        .icon-skills::before { content: "\f0b2"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+        .icon-works::before { content: "\f03e"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+        .icon-contact::before { content: "\f003"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+
+
+        /* Popup Styles (カード拡大アニメーション削除) */
+        .popup-card {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(45px);
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 120;
+            opacity: 0; /* 初期状態では非表示 */
+            visibility: hidden;
+            transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
+            pointer-events: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-top: 50px;
+        }
+
+
+        body.popup-active {
+            overflow: hidden;
+        }
+
+        .popup-card.show {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .popup-card .popup-content {
+            position: relative;
+            max-width: 540px;
+            width: 95%;
+            margin: 20px;
+            padding: 25px 30px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            border-radius: 26px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            opacity: 0; /* 初期状態では非表示 */
+            transform: scale(0.9); /* 初期状態を少し縮小 */
+            transition:
+                opacity 0.35s ease-in-out,
+                filter 0.35s ease-in-out,
+                transform 0.35s ease-in-out; /* transform を追加 */
+        }
+
+
+        .popup-card.show .popup-content {
+            opacity: 1;
+            filter: blur(0px);
+            transform: scale(1); /* showクラスが付与されたら等倍に */
+            border-radius: 30px;
+        }
+
+
+        .popup-card .popup-content.card-expanded {
+        }
+
+
+        .popup-card .popup-content .close-button {
             position: absolute;
-            width:  100%;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.7em;
+            opacity: 0.6;
+            cursor: pointer;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 3;
         }
-        .title {
-            margin-right: auto;
-            margin-left:  20px;
-            margin-top:  15px;
-            z-index:  7;
-            font-size:  35px;
-            color: rgb(54,  54,  54);
-            padding-bottom:  20px;
+
+        .popup-card .popup-content .close-button:hover {
+            opacity: 1;
         }
-    }
-    body {
-        background-color: rgb(49,  97,  208);
-        margin-top: auto;
-    }
+
+        /* ポップアップフォーム */
+        .popup-card .popup-content form {
+            display: grid;
+            gap: 13px;
+        }
+
+        .popup-card .popup-content form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
 
 
-    #wrapper{
-        /*描画されるテキストを中央寄せにする*/
-	    display:flex;
-	    justify-content: center;
-	    align-items: center;
-    }
-    #particle{
-        width:100%;
-	    height: 100vh;
-	    vertical-align: bottom;/*canvasタグ下に余白が生まれるのを防ぐ*/
-    }
-.h2{
-    
-}
+        .popup-card .popup-content form input, .popup-card .popup-content form textarea {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 7px;
+            padding: 11px 14px;
+            color: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.95em;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-</style>
+        .popup-card .popup-content form textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .popup-card .popup-content form input::placeholder, .popup-card .popup-content form textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .popup-card .popup-content form button {
+            display: inline-block;
+            padding: 11px 22px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            margin-top: 4px;
+            transition: background-color 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .popup-card .popup-content form button:hover {
+            background-color: #0056b3;
+        }
+
+
+        /* レスポンシブデザイン (iPhoneを意識したサイズ) */
+        @media screen and (max-width: 768px) {
+            header h1 {
+                font-size: 1.1em;
+            }
+
+            main {
+                padding: 12px;
+                margin-top: 40px;
+            }
+
+            .card-container {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 8px;
+                padding: 12px;
+            }
+
+            .card {
+                border-radius: 22px;
+                padding: 8px;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            }
+
+            .icon {
+                font-size: 2em;
+                margin-bottom: 5px;
+            }
+
+            .card h2 {
+                font-size: 0.9em;
+            }
+
+            .card p {
+                font-size: 0.75em;
+                line-height: 1.2;
+            }
+
+            .popup-card .popup-content {
+                border-radius: 26px;
+                padding: 18px 22px;
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+                margin: 12px;
+            }
+
+            .popup-card .popup-content h2 {
+                font-size: 1.4em;
+                margin-bottom: 10px;
+            }
+
+             .popup-card .popup-content p, .popup-card .popup-content ul, .popup-card .popup-content form label, .popup-card .popup-content form input, .popup-card .popup-content form textarea {
+                font-size: 0.9em;
+            }
+
+            .popup-card .popup-content ul {
+                padding-left: 18px;
+                margin-bottom: 10px;
+            }
+
+            .popup-card .popup-content li {
+                margin-bottom: 5px;
+            }
+
+            .popup-card .popup-content .close-button {
+                font-size: 1.5em;
+                top: 8px;
+                right: 8px;
+            }
+
+            .popup-card .popup-content form {
+                 gap: 10px;
+            }
+
+            .popup-card .popup-content form label {
+                 margin-bottom: 3px;
+            }
+
+            .popup-card .popup-content form input, .popup-card .popup-content form textarea {
+                 border-radius: 6px;
+                 padding: 9px 11px;
+                 font-size: 0.9em;
+            }
+
+            .popup-card .popup-content form textarea {
+                 min-height: 90px;
+            }
+
+            .popup-card .popup-content form button {
+                 border-radius: 8px;
+                 padding: 9px 18px;
+                 margin-top: 3px;
+                 font-size: 0.9em;
+            }
+        }
+
+
+        /* Card Animation (削除) */
+        .card {
+            opacity: 1;
+            transform: translateY(0);
+             transition: none; /* card hover 以外のアニメーションを無効化 */
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card.card-expanded {
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mizuyuzu</h1>
+    </header>
+
+    <main>
+        <section class="portfolio-section">
+            <div class="portfolio-image"><img src="icon.jpg" alt="ポートフォリオ画像"></div>
+        </section>
+
+        <section class="card-container">
+            <!-- 自己紹介 -->
+            <div class="card" id="about-card">
+                <div class="card-content">
+                    <i class="icon icon-user"></i>
+                    <h2>About</h2>
+                    <p>自己紹介</p>
+                </div>
+            </div>
+            <div class="popup-card" id="popup-about-card">
+                <div class="popup-content">
+                    <button class="close-button" data-card="about-card" aria-label="閉じる">×</button>
+                    <h2>About Me</h2>
+                    <p>らーゆと申します。</p>
+                    <p>一般的パソオタ及びアニオタです。またノベルゲーをこよなく愛しています。</p>
+                    <p>そして人生は百合で百合は人生です。きらら作品も愛しているのでそちらもよろしくお願いします。</p>
+                </div>
+            </div>
+
+            <!-- スキル -->
+            <div class="card" id="skills-card">
+                <div class="card-content">
+                    <i class="icon icon-skills"></i>
+                    <h2>Skills</h2>
+                    <p>スキル</p>
+                </div>
+            </div>
+            <div class="popup-card" id="popup-skills-card">
+                <div class="popup-content">
+                    <button class="close-button" data-card="skills-card" aria-label="閉じる">×</button>
+                    <h2>Skills</h2>
+                    <p>これまで培ってきたスキルは以下の通りです。</p>
+                    <ul>
+                        <li><strong>デザイン</strong>: ロゴデザインなどを行なっています。</li>
+                        <li><strong>動画作成</strong>: 動画、MVなどを作ります。またBlenderなどで3Dの作品も作ることがあります。</li>
+                        <li><strong>フロントエンドエンジニアリング</strong>: 大して何もしていません()　WordPressとかを使ってそれっぽいサイトを作っています。適当なので悪しからず。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 作品 -->
+            <div class="card" id="works-card">
+                <div class="card-content">
+                    <i class="icon icon-works"></i>
+                    <h2>Works</h2>
+                    <p>作品</p>
+                </div>
+            </div>
+             <div class="popup-card" id="popup-works-card">
+                <div class="popup-content">
+                    <button class="close-button" data-card="works-card" aria-label="閉じる">×</button>
+                    <h2>Works</h2>
+                    <p>これまでに制作した作品の一部です。いつか追加します。</p>
+                    <div class="works-grid">
+                        <img src="img/work1_large.jpg" alt="作品1">
+                        <img src="img/work2_large.jpg" alt="作品2">
+                        <img src="img/work3_large.jpg" alt="作品3">
+                         <!-- 必要であれば作品をもっと追加 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.querySelector('body');
+            const cards = document.querySelectorAll('.card');
+            const cardButtons = document.querySelectorAll('.card-button');
+            const closeButtons = document.querySelectorAll('.popup-card .close-button');
+            const popupCards = document.querySelectorAll('.popup-card');
+
+            // Card Click Event Listener
+            cards.forEach(card => {
+                card.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const cardId = card.id;
+                    const popupCard = document.getElementById(`popup-${cardId}`);
+
+
+                    if (popupCard) {
+                        popupCard.classList.add('show');
+                        body.classList.add('popup-active');
+
+
+                    } else {
+                        console.error('Popup Card Not Found: ', cardId);
+                    }
+                });
+            });
+
+
+            // Hide Popup on close button click
+            closeButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const cardId = button.dataset.card;
+                    const popupCard = document.getElementById(`popup-${cardId}`);
+
+
+                    if (popupCard) {
+                        popupCard.classList.remove('show');
+                        body.classList.remove('popup-active');
+
+
+                    } else {
+                         console.error('Popup Card Not Found (Close Button): ', cardId);
+                    }
+                });
+            });
+
+            // Close popup when clicking outside of it
+            popupCards.forEach(popupCard => {
+                popupCard.addEventListener('click', (event) => {
+                    if (event.target === popupCard) {
+                        const cardId = event.target.id.replace('popup-', '');
+
+
+                        popupCard.classList.remove('show');
+                        body.classList.remove('popup-active');
+
+
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
